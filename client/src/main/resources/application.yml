@@ -1,0 +1,25 @@
+logging:
+  level:
+    root: INFO
+    org.springframework: WARN
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          auth0:
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          auth0:
+            issuer-uri: ${ISSUER_URI}
+
+resource-uri: ${RESOURCE_URI}
+
+auth0:
+  audience: http://localhost:8081

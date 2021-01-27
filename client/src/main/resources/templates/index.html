@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+</head>
+<body>
+    <div sec:authorize="!isAuthenticated()" class="container">
+        <div class="row">
+            <div class="col s12">
+                <a th:href="@{/oauth2/authorization/auth0}" class="waves-effect waves-light btn">Log In</a>
+            </div>
+        </div>
+    </div>
+    <div sec:authorize="isAuthenticated()">
+<!--        <p th:text="Hi, ${profile.get('name')}" />-->
+        <div>
+            <button><a th:href="@{/report}">Connect</a></button>
+        </div>
+        <div><button><a th:href="@{/logout}">Logout</a> </button></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

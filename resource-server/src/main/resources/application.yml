@@ -1,0 +1,18 @@
+server:
+  port: 8081
+
+logging:
+  level:
+    root: INFO
+    org.springframework: WARN
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${ISSUER_URI}
+          jwk-set-uri: ${JWK_SET_URI}
+
+auth0:
+  audience: http://localhost:8081
