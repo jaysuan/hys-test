@@ -1,5 +1,6 @@
 package com.suan.client;
 
+import com.suan.client.apiclient.ServerApiClient;
 import com.suan.client.host.PublicIpResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
