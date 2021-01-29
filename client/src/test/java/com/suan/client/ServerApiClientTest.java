@@ -44,7 +44,7 @@ public class ServerApiClientTest {
 
     @Test
     @DisplayName("Successful /api/healthcheck call")
-    void testHealthCheck() {
+    void shouldReturnServerHealthcheckResponse() {
         var mockResponse = new MockResponse()
             .addHeader("Content-Type", "text/plain")
             .setBody("Still up!");
