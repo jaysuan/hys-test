@@ -1,6 +1,7 @@
 package com.suan.client;
 
 import com.suan.client.apiclient.ServerApiClient;
+import com.suan.client.apiclient.ServerApiException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -19,10 +21,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 @TestPropertySource(properties = {
-    "RESOURCE_URI=http://localhost:8090/api",
+    "RESOURCE_URI=http://localhost:8090/api"
 })
 public class ServerApiClientTest {
 
@@ -52,6 +55,39 @@ public class ServerApiClientTest {
 
         var response = serverApiClient.healthCheck();
         assertThat(response).isEqualTo("Still up!");
+    }
+
+    @Test
+    @DisplayName("Successful /api/report call")
+    void shouldReturnServerResponse() {
+        var mockResponse = new MockResponse()
+            .addHeader("Content-Type", "application/json")
+            .setBody("{" +
+                "\"id\": \"123-456-789\"," +
+                "\"message\": \"Client connected\"," +
+                "\"clientMetadata\": {" +
+                "\"ip\": \"173.123.0.13\"" +
+                "}" +
+                "}");
+        mockServer.enqueue(mockResponse);
+
+        var response = serverApiClient.sendClientMetadata(new ClientMetadata("173.123.0.13"));
+        assertThat(response.getId()).isNotEmpty();
+        assertThat(response.getMessage()).isEqualTo("Client connected");
+        assertThat(response.getClientMetadata().getIp()).isEqualTo("173.123.0.13");
+    }
+
+    @Test
+    @DisplayName("Resouce server returned 401")
+    void shouldThrowServerApiException() {
+        var mockResponse = new MockResponse()
+            .setResponseCode(401);
+        mockServer.enqueue(mockResponse);
+
+        var serverApiException = assertThrows(ServerApiException.class,
+            () -> serverApiClient.sendClientMetadata(new ClientMetadata("0.0.0.0")));
+
+        assertThat(serverApiException.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 
 
